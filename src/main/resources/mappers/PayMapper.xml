@@ -4,9 +4,16 @@
 <mapper namespace="sfmi.batch.dao.PayDAO"><!--namespace를 통해 UserDAO와 연결합니다. -->
 
 	<select id="selectPays" resultType="Pay">
-		SELECT id, amount, tx_name, tx_date_time FROM pay
+		SELECT id, amount, tx_name FROM pay
 	</select>
 	<select id="selectPaysByPaging" resultType="Pay">
-		SELECT id, amount, tx_name, tx_date_time FROM pay ORDER BY id ASC LIMIT #{_skiprows}, #{_pagesize}
+		SELECT id, amount, tx_name FROM pay ORDER BY id ASC LIMIT #{_skiprows}, #{_pagesize}
 	</select>
+	
+    <insert id="updatePay" parameterType="Pay">
+       UPDATE pay
+       SET amount = #{amount},
+           tx_name = #{txName}
+       WHERE id = #{id}   
+    </insert>
 </mapper>
