@@ -9,5 +9,6 @@ import sfmi.batch.dto.Pay;
 @Mapper
 public interface PayDAO {
 	List<Pay> selectPays(Pay pay) throws Exception;
+	List<Pay> selectPayByPartition(Pay pay) throws Exception;
 	void updatePay(Pay pay) throws Exception;
 }

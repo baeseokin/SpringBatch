@@ -1,5 +1,10 @@
 package sfmi.batch.job;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -15,7 +20,11 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.batch.item.file.FlatFileFooterCallback;
+import org.springframework.batch.item.file.FlatFileHeaderCallback;
 import org.springframework.batch.item.file.FlatFileItemWriter;
+import org.springframework.batch.item.file.MultiResourceItemWriter;
+import org.springframework.batch.item.file.ResourceSuffixCreator;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
@@ -37,9 +46,9 @@ import sfmi.batch.util.Incrementer;
 @RequiredArgsConstructor
 @Slf4j
 
-public class Db2SamJob{
+public class Db2SamMultiFileHeaderFooterJob{
 	
-	public static final String JOB_NAME ="Db2SamJob";
+	public static final String JOB_NAME ="Db2SamMultiFileHeaderFooterJob";
 	
 	private final JobBuilderFactory jobBuilderFactory;
 	private final StepBuilderFactory stepBuilderFactory;
@@ -70,7 +79,7 @@ public class Db2SamJob{
 				.<Pay, Pay> chunk(chunkSize)
 				.reader(db2SamItemReader())
 				.processor(db2SamItemProcess())
-				.writer(db2SamItemWriter())
+				.writer(multiResourceItemWriter())
 				.build();
 	}
 
@@ -90,19 +99,7 @@ public class Db2SamJob{
 	  
 	  }
 	 
-	/*
-	 * @Bean(name = JOB_NAME +"_reader")
-	 * 
-	 * @StepScope public JdbcCursorItemReader<Pay> db2SamItemReader() throws
-	 * Exception{
-	 * 
-	 * JdbcCursorItemReader<Pay> reader = new JdbcCursorItemReader<Pay>();
-	 * reader.setFetchSize(chunkSize); reader.setDataSource(dataSource);
-	 * reader.setRowMapper(new BeanPropertyRowMapper<>(Pay.class));
-	 * reader.setSql("SELECT id, amount, tx_name, tx_date_time FROM pay");
-	 * reader.setName(JOB_NAME +"_reader"); return reader; }
-	 */
-	
+
 	@Bean
 	@StepScope
 	public ItemProcessor<Pay,Pay> db2SamItemProcess() {
@@ -126,12 +123,46 @@ public class Db2SamJob{
 		  lineAggregator.setDelimiter(",");
 		  lineAggregator.setFieldExtractor(fieldExtractor);
 		  
-		  FlatFileItemWriter writer = new FlatFileItemWriter();
-		  writer.setResource(new FileSystemResource("target/pay_out.txt"));
+		
+		  FlatFileItemWriter writer = new FlatFileItemWriter(); 
 		  writer.setLineAggregator(lineAggregator);
-	
+		  writer.setHeaderCallback(new FlatFileHeaderCallback() {
+			
+			@Override
+			public void writeHeader(Writer writer) throws IOException {
+				writer.write("########################################heaer#############################");
+			}
+		  });
+		  writer.setFooterCallback(new FlatFileFooterCallback() {
+			
+			@Override
+			public void writeFooter(Writer writer) throws IOException {
+				writer.write("########################################footer#############################");
+			}
+		});
+		
+		 
+		 
 		  return writer;
 	}
 		
+	public MultiResourceItemWriter<Pay> multiResourceItemWriter(){
+		MultiResourceItemWriter<Pay> writer =  new MultiResourceItemWriter<>();
+		writer.setResource(new FileSystemResource("target/pay_out"));
+		writer.setDelegate(db2SamItemWriter());
+		writer.setItemCountLimitPerResource(100);
+		writer.setResourceSuffixCreator(new ResourceSuffixCreator() {
+			@Override
+			public String getSuffix(int index) {
+				String suffix ="";
+				suffix = "-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + ".txt";
+				return suffix;
+			}
+		});
+		
+		
+		return writer;
+		
+	}
 		
 }

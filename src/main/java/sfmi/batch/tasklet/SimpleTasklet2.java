@@ -11,16 +11,18 @@ import org.springframework.batch.repeat.RepeatStatus;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SimpleTasklet implements Tasklet{
+public class SimpleTasklet2 implements Tasklet{
 
 	private StepExecution stepExecution;
 	
 	@Override
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
-		log.info("SimpleTasklet  ----------------->");
+		log.info("SimpleTasklet2  ----------------->");
 		ExecutionContext jobExecutionContext = chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
 		
-		jobExecutionContext.put("paramData", "Step에서넘기는 데이터");
+		String paramData = jobExecutionContext.getString("paramData");
+		
+		log.info("SimpleTasklet2 , paramData:{}", paramData);
 		
 		return  RepeatStatus.FINISHED;
 	}

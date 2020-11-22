@@ -6,6 +6,18 @@
 	<select id="selectPays" resultType="Pay">
 		SELECT id, amount, tx_name FROM pay
 	</select>
+	<select id="selectPayByPartition" resultType="Pay">
+		<![CDATA[ 
+		SELECT id, amount, tx_name FROM pay where id >= #{minValue} and id < #{maxValue}
+		]]>
+	</select>
+	<select id="selectMinValue" resultType="Integer">
+		SELECT MIN(ID) FROM BATCH.PAY
+	</select>	
+	<select id="selectMaxValue" resultType="Integer">
+		SELECT MAX(ID) FROM BATCH.PAY
+	</select>	
+	
 	<select id="selectPaysByPaging" resultType="Pay">
 		SELECT id, amount, tx_name FROM pay ORDER BY id ASC LIMIT #{_skiprows}, #{_pagesize}
 	</select>
