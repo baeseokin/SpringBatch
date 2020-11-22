@@ -121,20 +121,11 @@ public class Db2DbMultiJob{
 	@Bean
 	@StepScope
 	public ItemProcessor<Pay,Pay> db2DbMultiItemProcess() {
-		
-		ItemProcessor<Pay,Pay> processor = new  ItemProcessor<Pay,Pay>(){
-			@Override
-			public Pay process(Pay item) {
-				item.setTxName(item.getTxName()+"1");
-				return item;
-			}
+		return item -> {
+			log.info("ItemProcessor  -----  item :{}", item);
+			item.setTxName(item.getTxName()+"1");
+			return item;
 		};
-		return processor;
-		
-		/*
-		 * return item -> { log.info("ItemProcessor  -----  item :{}", item);
-		 * item.setTxName(item.getTxName()+"1"); return item; };
-		 */
 	}	
 	
 	

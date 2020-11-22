@@ -37,7 +37,7 @@ import sfmi.batch.util.Incrementer;
 @RequiredArgsConstructor
 @Slf4j
 
-public class Db2SamJob{
+public class Db2SamJob  extends DefaultBatchConfigurer{
 	
 	public static final String JOB_NAME ="Db2SamJob";
 	
@@ -47,6 +47,14 @@ public class Db2SamJob{
 	
 	@Autowired 
 	private SqlSessionFactory sqlSessionFactory;
+
+	@Override
+	protected JobRepository createJobRepository() throws Exception {
+		MapJobRepositoryFactoryBean factory = new MapJobRepositoryFactoryBean();
+		factory.setTransactionManager(new ResourcelessTransactionManager());
+		factory.afterPropertiesSet();
+		return factory.getObject();
+	}
 
 	private int chunkSize = 10;
 	
