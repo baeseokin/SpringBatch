@@ -1,5 +1,7 @@
 package sfmi.batch.job;
 
+import java.sql.BatchUpdateException;
+
 import javax.annotation.PostConstruct;
 
 import org.mybatis.spring.batch.MyBatisBatchItemWriter;
@@ -48,6 +50,10 @@ public class Db2DbJob extends SfmiJobSupport{
 	public Step db2DbStep(MyBatisCursorItemReader<Pay> db2DbItemReader, ItemProcessor<Pay,Pay> db2DbItemProcess, MyBatisBatchItemWriter<Pay> db2DbItemWriter ) throws Exception {
 		return stepBuilderFactory.get(JOB_NAME + "_step")
 				.<Pay, Pay> chunk(chunkSize)
+				.faultTolerant() 
+				.skipLimit(5) 
+				.skip(RuntimeException.class)
+				.skip(BatchUpdateException.class)
 				.reader(db2DbItemReader)
 				.processor(db2DbItemProcess)
 				.writer(db2DbItemWriter)
@@ -72,14 +78,18 @@ public class Db2DbJob extends SfmiJobSupport{
 		return item -> {
 			log.info("ItemProcessor  -----  item :{}", item);
 			
-			//testService.message();
+			
 			
 			if(item.getAmount() < 10000) {
 				item.setTxName(item.getTxName()+"1");
 				return item;
+			}if(item.getId() == 204){
+				item.setTxName("11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
+				return item;
+				//throw new RuntimeException();
 			}else {
-				return null;
-			}	
+				return item;
+			}
 		};
 	}	
 	@Bean

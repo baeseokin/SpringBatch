@@ -37,8 +37,6 @@ public class NexusDBAspect {
 	@Before(value = "execution(* run(org.springframework.batch.core.Step))")
     public void beforeStep(){
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>beforeStep"); // Obtaining method
-        
-    
 	}
 	/*
 	 * @Around("@annotation(sfmi.batch.aop.NexusDB)") public Object
