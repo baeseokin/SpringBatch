@@ -1,20 +1,29 @@
 package sfmi.batch.support;
 
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
 
-public abstract class SfmiJobSupport {
+import sfmi.batch.aop.MyContextContainer;
+import sfmi.batch.aop.NexusDB;
 
+@Component
+public class SfmiJobSupport {
+	@Autowired 
 	public SfmiJobBuilderFactory jobBuilderFactory;
+	@Autowired 
 	public StepBuilderFactory stepBuilderFactory;
+	@Autowired 
 	public DataSource dataSource;
 	
 	@Autowired 
@@ -32,12 +41,6 @@ public abstract class SfmiJobSupport {
 		this.poolSize = poolSize;
 	}		
 	
-	public SfmiJobSupport(SfmiJobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory, DataSource dataSource) {
-		this.jobBuilderFactory = jobBuilderFactory;
-		this.stepBuilderFactory = stepBuilderFactory;
-		this.dataSource = dataSource;
-	}
-	
 	public TaskExecutor executor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(poolSize);
@@ -48,6 +51,16 @@ public abstract class SfmiJobSupport {
 				
 		return executor;
 	}	
+
+	@NexusDB
+	public void loadDbProperties(String dbName) {
+		daoService.loadDbProperties(dbName);
+	}
 	
-	public abstract Job run() throws Exception;
+	@Autowired
+	private DaoInitializeService daoService;
+	
+	
+	
+	//public abstract Job run(Step db2DbStep) throws Exception;
 }
