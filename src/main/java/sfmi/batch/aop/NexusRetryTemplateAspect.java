@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import sfmi.batch.retry.NexusRetryTemplate;
 
 
-@Aspect
+//@Aspect
 @Component
 public class NexusRetryTemplateAspect {
 	

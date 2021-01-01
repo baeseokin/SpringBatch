@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sfmi.batch.dao.SeqDAO1"><!--namespace를 통해 UserDAO와 연결합니다. -->
+
+	<select id="selectSeq" resultType="Seq">
+		SELECT ID FROM TB_SEQ WHERE ID = #{id}
+	</select>
+	<insert id="insertSeq" parameterType="Seq">
+       INSERT INTO TB_SEQ(ID) VALUES (#{id});
+    </insert>
+</mapper>

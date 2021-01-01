@@ -9,6 +9,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -23,11 +24,21 @@ public class SfmiJobSupport {
 	public SfmiJobBuilderFactory jobBuilderFactory;
 	@Autowired 
 	public StepBuilderFactory stepBuilderFactory;
-	@Autowired 
-	public DataSource dataSource;
+	/*
+	 * @Autowired public DataSource dataSource1;
+	 * 
+	 * @Autowired public DataSource dataSource2;
+	 */
 	
 	@Autowired 
-	public SqlSessionFactory sqlSessionFactory;
+	public SqlSessionFactory sqlSessionFactory1;
+	
+	@Autowired
+	@Qualifier("sqlSessionFactory2")
+	public SqlSessionFactory sqlSessionFactory2;
+	
+	
+	
 
 	public int chunkSize;
 	public int poolSize;
@@ -52,15 +63,5 @@ public class SfmiJobSupport {
 		return executor;
 	}	
 
-	@NexusDB
-	public void loadDbProperties(String dbName) {
-		daoService.loadDbProperties(dbName);
-	}
-	
-	@Autowired
-	private DaoInitializeService daoService;
-	
-	
-	
-	//public abstract Job run(Step db2DbStep) throws Exception;
+
 }

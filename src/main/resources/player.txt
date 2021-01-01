@@ -1,6 +1,6 @@
 ID,lastName,firstName,position,birthYear,debutYear
-AbduKa00,Abdul-Jabbar,Karim,rb,1974,1996
-AbduKa01,Abdul-Jabbar,Karim,rb,1974,1996
+AbduKa00,Abdul-Jabbar,Karim,rb,01974,01996
+AbduKa01,Abdul-Jabbar,Karim,rb,01974,01996
 AbduKa02,Abdul-Jabbar,Karim,rb,1974,1996
 AbduKa03,Abdul-Jabbar,Karim,rb,1974,1996
 AbduKa04,Abdul-Jabbar,Karim,rb,1974,1996

@@ -6,8 +6,12 @@
 		<setting name="mapUnderscoreToCamelCase" value="true"/>
 		<setting name="callSettersOnNulls" value="true"/>
 		<setting name="jdbcTypeForNull" value="NULL"/>
+		<setting name="defaultExecutorType" value="BATCH"/>
 	</settings>
 	<typeAliases>
 		<typeAlias type="sfmi.batch.dto.Pay" alias="Pay"/>
+		<typeAlias type="sfmi.batch.dto.Seq" alias="Seq"/>
+		<typeAlias type="sfmi.batch.dto.SeqDetail" alias="SeqDetail"/>
 	</typeAliases>	
+
 </configuration>
